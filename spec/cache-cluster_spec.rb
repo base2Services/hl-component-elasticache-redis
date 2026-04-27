@@ -140,7 +140,11 @@ describe 'compiled component redis' do
       end
       
       it "to have property SnapshotRetentionLimit" do
-          expect(resource["Properties"]["SnapshotRetentionLimit"]).to eq({"Ref"=>"SnapshotRetentionLimit"})
+          expect(resource["Properties"]["SnapshotRetentionLimit"]).to eq({"Fn::If"=>["SnapshotRetentionEnabled", {"Ref"=>"SnapshotRetentionLimit"}, {"Ref"=>"AWS::NoValue"}]})
+      end
+
+      it "to have property SnapshottingClusterId" do
+          expect(resource["Properties"]["SnapshottingClusterId"]).to eq({"Fn::If"=>["SnapshottingClusterIdEnabled", {"Ref"=>"SnapshottingClusterId"}, {"Ref"=>"AWS::NoValue"}]})
       end
       
       it "to have property Tags" do

@@ -24,6 +24,9 @@ CfhighlanderTemplate do
     ComponentParam 'SnapshotRetentionLimit',
       description: 'The number of days for which ElastiCache retains automatic snapshots before deleting them.'
 
+    ComponentParam 'SnapshottingClusterId', '',
+      description: 'The cluster ID that is used as the daily snapshot source for the replication group. Required when enabling SnapshotRetentionLimit.'
+
     ComponentParam 'InstanceType', 'cache.t3.small',
       description: 'The compute and memory capacity of the nodes in the node group (shard)'
 

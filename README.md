@@ -15,6 +15,7 @@
 | SnapshotName | The name of a snapshot from which to restore data into the new replication group |  | false | String
 | SnapshotArns | A list of ARNs that uniquely identify the Redis RDB snapshot files stored in S3 | | false | String
 | SnapshotRetentionLimit | The number of days for which ElastiCache retains automatic snapshots before deleting them | | false | Integer
+| SnapshottingClusterId | The cluster ID used as the daily snapshot source for the replication group | | false | String
 | NumNodeGroups | Specifies the number of node groups (shards) for this Redis replication group | 1 | false | Integer |
 | ReplicasPerNodeGroup | An optional parameter that specifies the number of replica nodes in each node group (shard) | 0 | false | Integer | [0, 1, 2, 3, 4, 5]
 | NumCacheClusters | The number of clusters this replication group initially has | 2 | false | Integer | [1, 2, 3, 4, 5, 6]
@@ -97,6 +98,31 @@ snapshot_restore_type: s3
 This will enable the below parameter:
 
 - **SnapshotArns** A list of ARNs that uniquely identify the Redis RDB snapshot files stored in S3
+
+### Automatic Backups
+
+By default, `SnapshotRetentionLimit` and `SnapshottingClusterId` are omitted from the CloudFormation resource, leaving any manually configured backup settings untouched.
+
+To enable automatic backups via CloudFormation:
+
+**New clusters** — set `SnapshotRetentionLimit` only. ElastiCache automatically assigns the primary node as the snapshotting cluster:
+
+```yaml
+SnapshotRetentionLimit: 7
+```
+
+**Existing clusters** — both `SnapshotRetentionLimit` and `SnapshottingClusterId` are required when enabling backups on an existing cluster:
+
+```yaml
+SnapshotRetentionLimit: 7
+SnapshottingClusterId: my-cluster-001
+```
+
+**Disable automatic backups:**
+
+```yaml
+SnapshotRetentionLimit: 0
+```
 
 ### Encryption Configuration
 

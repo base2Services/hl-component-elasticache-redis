@@ -82,6 +82,8 @@ CloudFormation do
   Condition('DataTieringEnabled', FnEquals(Ref(:DataTieringEnabled), 'true'))
   Condition('NoSnapshotNamEnabled', FnEquals(Ref(:SnapshotName), ''))
   Condition('NoSnapshotArnsEnabled', FnEquals(Ref(:SnapshotArns), ''))
+  Condition('SnapshotRetentionEnabled', FnNot(FnEquals(Ref(:SnapshotRetentionLimit), '')))
+  Condition('SnapshottingClusterIdEnabled', FnNot(FnEquals(Ref(:SnapshottingClusterId), '')))
 
   engine = external_parameters.fetch(:engine, 'redis')
 
@@ -117,7 +119,8 @@ CloudFormation do
 
     SnapshotName FnIf('NoSnapshotNamEnabled', Ref('AWS::NoValue'), Ref(:SnapshotName))
     SnapshotArns FnIf('NoSnapshotArnsEnabled', Ref('AWS::NoValue'), FnSplit(",", Ref(:SnapshotArns)))
-    SnapshotRetentionLimit Ref(:SnapshotRetentionLimit)
+    SnapshotRetentionLimit FnIf('SnapshotRetentionEnabled', Ref(:SnapshotRetentionLimit), Ref('AWS::NoValue'))
+    SnapshottingClusterId FnIf('SnapshottingClusterIdEnabled', Ref(:SnapshottingClusterId), Ref('AWS::NoValue'))
 
     SnapshotWindow snapshot_window unless snapshot_window.nil?
     PreferredMaintenanceWindow maintenance_window unless maintenance_window.nil?
